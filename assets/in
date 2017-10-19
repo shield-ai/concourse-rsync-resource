@@ -24,8 +24,12 @@ PORT=$(jq -r '.source.port // ""' < $SCRIPT_INPUT)
 BASE_DIR=$(jq -r '.source.base_dir // ""' < $SCRIPT_INPUT)
 USER=$(jq -r '.source.user // ""' < $SCRIPT_INPUT)
 VERSION=$(jq -r '.version.ref // ""' < $SCRIPT_INPUT)
+
+# jq -e exits with 1 if false/null, 0 otherwise. need to flip that logic
 jq -re '.source.disable_version_path' < $SCRIPT_INPUT >/dev/null
 DISABLE_VERSION_PATH=$?
+jq -re '.source.directory_defined_versioning' < $SCRIPT_INPUT >/dev/null
+BUILD_DEFINED_VERSIONING=$?
 
 ## check if port is set in the configuration and
 ## use default SSH port number 22 otherwise
@@ -48,8 +52,9 @@ chmod -R 600 ~/.ssh
 eval $(ssh-agent) 1>&2 >/dev/null
 SSH_ASKPASS=/opt/resource/askpass.sh DISPLAY= ssh-add ~/.ssh/server_key 1>&2 >/dev/null
 
-if [ $DISABLE_VERSION_PATH -eq 0 ]
-then
+if [ $BUILD_DEFINED_VERSIONING -eq 0 ]; then
+    SRC_DIR=$BASE_DIR/"$BUILD_PIPELINE_NAME-$BUILD_NAME"
+elif [ $DISABLE_VERSION_PATH -eq 0 ]; then
     SRC_DIR=$BASE_DIR
 else
     SRC_DIR=$BASE_DIR/$VERSION
