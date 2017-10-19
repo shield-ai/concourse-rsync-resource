@@ -74,7 +74,7 @@ if [ $? -eq 0 ]; then
   echo $MD5_STRING 1>&2
   
   if [ $BUILD_DEFINED_VERSIONING -eq 0 ]; then
-      MD5_PATH="$BUILD_PIPELINE_NAME-$BUILD_NAME"
+      MD5_PATH=""
   elif [ $DISABLE_VERSION_PATH -eq 0 ]; then
       MD5_PATH=""
   else
