@@ -34,7 +34,7 @@ BUILD_DEFINED_VERSIONING=$?
 
 if [ -z "$RSYNC_OPTS_ARR" ]
 then
-    RSYNC_OPTS="-Pav"
+    RSYNC_OPTS="-a"
 else
     RSYNC_OPTS=$(jq -r 'join(" ")' <<< $RSYNC_OPTS_ARR)
 fi
